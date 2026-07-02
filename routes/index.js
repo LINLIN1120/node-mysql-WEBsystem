@@ -45,4 +45,6 @@ router.post('/', function (req, res, next) {
     });
 });
 
+router.use('/signup', require('./signup'));
+
 module.exports = router;
