@@ -24,6 +24,7 @@ router.get('/', function (req, res, next) {
       console.error(err);
       res.render('index', {
         title: 'ToDo App',
+        todos: [],
       });
     });
 });
@@ -39,6 +40,7 @@ router.post('/', function (req, res, next) {
       console.error(err);
       res.render('index', {
         title: 'ToDo App',
+        todos: [],
       });
     });
 });
