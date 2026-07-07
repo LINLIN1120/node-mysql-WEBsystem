@@ -3,8 +3,7 @@
 /**
  * Module dependencies.
  */
-
-var app = require('../app');
+require('../db/init');var app = require('../app');
 var debug = require('debug')('node-mysql-websystem:server');
 var http = require('http');
 

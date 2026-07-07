@@ -13,7 +13,7 @@ const connection = mysql.createConnection({
 router.get('/', function (req, res, next) {
 const userId = req.session.userid;
 const isAuth = Boolean(userId);
-console.log(`isAuth: ${isAuth}`);
+// console.log(`isAuth: ${isAuth}`); // Debugging line to check if the user is authenticated
 
   knex("tasks")
     .select("*")
@@ -51,5 +51,6 @@ router.post('/', function (req, res, next) {
 
 router.use('/signup', require('./signup'));
 router.use('/signin', require('./signin'));
+router.use('/logout', require('./logout'));
 
 module.exports = router;
