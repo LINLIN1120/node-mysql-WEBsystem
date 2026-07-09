@@ -8,10 +8,12 @@ const secret = "secretCuisine123";
 
 module.exports = function (app) {
   passport.serializeUser(function (user, done) {
+    console.log("serializeUser");
     done(null, user.id);
   });
 
   passport.deserializeUser(async function (id, done) {
+    console.log("deserializeUser");
     try {
       const user = await User.findById(id);
       done(null, user);
@@ -23,7 +25,8 @@ module.exports = function (app) {
   passport.use(new LocalStrategy({
       usernameField: "username",
       passwordField: "password",
-    }, function (username, password, done) {
+      passReqToCallback: true,
+    }, function (req, username, password, done) {
       knex("users")
         .where({
           name: username,
@@ -32,7 +35,19 @@ module.exports = function (app) {
         .then(async function (results) {
           if (results.length === 0) {
             return done(null, false, {message: "Invalid User"});
-          } else if (await bcrypt.compare(password, results[0].password)) {
+          }
+
+          const storedPassword = results[0].password;
+          let passwordMatches = false;
+
+          try {
+            passwordMatches = await bcrypt.compare(password, storedPassword);
+          } catch (error) {
+            passwordMatches = password === storedPassword;
+          }
+
+          if (passwordMatches) {
+            req.session.userid = results[0].id;
             return done(null, results[0]);
           } else {
             return done(null, false, {message: "Invalid User"});
@@ -51,9 +66,10 @@ module.exports = function (app) {
       keys: [secret],
 
       // Cookie Options
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge:10000, // 10seconds
     })
   );
 
+  app.use(passport.initialize()); 
   app.use(passport.session());
 };
