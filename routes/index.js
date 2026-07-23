@@ -12,10 +12,13 @@ const connection = mysql.createConnection({
 
 router.get('/', function (req, res, next) {
 const isAuth = req.isAuthenticated();
+if (isAuth) {
+const userId = req.user.id;
 // console.log(`isAuth: ${isAuth}`); // Debugging line to check if the user is authenticated
 
   knex("tasks")
     .select("*")
+     .where({user_id: userId})
     .then(function (results) {
       console.log(results);
       res.render('index', {
@@ -30,15 +33,23 @@ const isAuth = req.isAuthenticated();
         title: 'ToDo App',
         todos: [],
         isAuth: isAuth,
+        errorMessage: [err.sqlMessage],
       });
     });
+  } else {
+    res.render('index', {
+      title: 'ToDo App',
+      isAuth: isAuth,
+    });
+  }
 });
 
 router.post('/', function (req, res, next) {
   const isAuth = req.isAuthenticated();
+  const userId = req.user.id;
   const todo = req.body.add;
   knex("tasks")
-    .insert({user_id: 1, content: todo})
+    .insert({user_id: userId, content: todo})
     .then(function () {
       res.redirect('/')
     })
@@ -48,6 +59,7 @@ router.post('/', function (req, res, next) {
         title: 'ToDo App',
         todos: [],
         isAuth: isAuth,
+        errorMessage: [err.sqlMessage],
       });
     });
 });
