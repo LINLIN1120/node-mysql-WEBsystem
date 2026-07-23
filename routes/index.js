@@ -11,8 +11,7 @@ const connection = mysql.createConnection({
 });
 
 router.get('/', function (req, res, next) {
-const userId = req.session.userid;
-const isAuth = Boolean(userId);
+const isAuth = req.isAuthenticated();
 // console.log(`isAuth: ${isAuth}`); // Debugging line to check if the user is authenticated
 
   knex("tasks")
@@ -36,8 +35,7 @@ const isAuth = Boolean(userId);
 });
 
 router.post('/', function (req, res, next) {
-  const userId = req.session.userid;
-  const isAuth = Boolean(userId);
+  const isAuth = req.isAuthenticated();
   const todo = req.body.add;
   knex("tasks")
     .insert({user_id: 1, content: todo})
