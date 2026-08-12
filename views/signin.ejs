@@ -8,16 +8,28 @@
 <body>
 <%- include('./header'); %>
 <%- include('./error_messages'); %>
-<div class="container">
-  <form action="/signin" method="post">
-    <label>ユーザ名</label>
-    <input required type="text" name="username"/>
-    <br>
-    <label>パスワード</label>
-    <input required type="password" name="password"/>
-    <br>
-    <input class="btn btn-primary" type="submit" value="Sign in"/>
-  </form>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg" style="border: none; border-radius: 10px;">
+        <div class="card-body p-5">
+          <h3 class="card-title text-center mb-4" style="color: #667eea; font-weight: bold;">ログイン</h3>
+          <form action="/signin" method="post">
+            <div class="form-group">
+              <label for="username" style="font-weight: 500; color: #333;">ユーザ名</label>
+              <input required type="text" class="form-control form-control-lg" id="username" name="username" placeholder="ユーザ名を入力" style="border-radius: 5px; border: 1px solid #ddd;"/>
+            </div>
+            <div class="form-group">
+              <label for="password" style="font-weight: 500; color: #333;">パスワード</label>
+              <input required type="password" class="form-control form-control-lg" id="password" name="password" placeholder="パスワードを入力" style="border-radius: 5px; border: 1px solid #ddd;"/>
+            </div>
+            <button type="submit" class="btn btn-lg btn-block mt-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 5px; font-weight: 500;">ログイン</button>
+          </form>
+          <p class="text-center mt-4" style="color: #999;">アカウントをお持ちでないですか？ <a href="/signup" style="color: #667eea; font-weight: 500;">サインアップ</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

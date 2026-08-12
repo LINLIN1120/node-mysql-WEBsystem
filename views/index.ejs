@@ -10,32 +10,120 @@
 <%- include('./header'); %>
 <%- include('./error_messages'); %>
 <% if(isAuth) { %>
-  <div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <form action="/" method="post">
-        <label>タスクの追加</label>
-        <input required type="text" name="add" placeholder="何をする?"/>
-        <input class="btn btn-primary" type="submit" value="追加"/>
-      </form>
-    </div>
-    <div class="col-md-6">
-      <ul>
-        <% for(let todo of todos){ %>
-          <li>
-            <span><%= todo.content %></span>
-            <form action="/delete/<%= todo.id %>" method="post" style="display:inline;">
-              <button type="submit" class="btn btn-danger btn-sm">削除</button>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4" style="color: #667eea; font-weight: bold;">My Tasks</h2>
+        
+        <!-- Add Task Form -->
+        <div class="card shadow-sm mb-4" style="border: none; border-radius: 10px;">
+          <div class="card-body">
+            <form action="/" method="post">
+              <div class="form-group">
+                <label for="taskInput" style="font-weight: 500; color: #333;">新しいタスクを追加</label>
+                <div class="input-group input-group-lg">
+                  <input required type="text" class="form-control" id="taskInput" name="add" placeholder="何をする?" style="border-radius: 5px 0 0 5px;" />
+                  <div class="input-group-append">
+                    <button class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 0 5px 5px 0;" type="submit">追加</button>
+                  </div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                  <label for="priority" style="font-weight: 500; color: #333;">優先順位</label>
+                  <select class="form-control" id="priority" name="priority" style="border-radius: 5px; border: 1px solid #ddd;">
+                    <option value="1">★★★ 高 (重要)</option>
+                    <option value="2" selected>★★ 中 (通常)</option>
+                    <option value="3">★ 低 (低優先度)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="deadline" style="font-weight: 500; color: #333;">終了期限（オプション）</label>
+                  <input type="datetime-local" class="form-control" id="deadline" name="deadline" style="border-radius: 5px; border: 1px solid #ddd;"/>
+                </div>
+              </div>
             </form>
-          </li>
-        <% } %>
-      </ul>
+          </div>
+        </div>
+        
+        <!-- Task List -->
+        <div class="task-list">
+          <% if(todos.length > 0) { %>
+            <% for(let todo of todos){ %>
+              <% 
+                let priorityStars = '';
+                let priorityColor = '';
+                let priorityLabel = '';
+                if(todo.priority === 1) {
+                  priorityStars = '★★★';
+                  priorityColor = '#dc3545';
+                  priorityLabel = '高';
+                } else if(todo.priority === 2) {
+                  priorityStars = '★★';
+                  priorityColor = '#ffc107';
+                  priorityLabel = '中';
+                } else {
+                  priorityStars = '★';
+                  priorityColor = '#6c757d';
+                  priorityLabel = '低';
+                }
+              %>
+              <div class="card shadow-sm mb-3 task-item" style="border: none; border-left: 4px solid <%= priorityColor %>; border-radius: 8px;">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div style="flex: 1;">
+                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <span style="color: <%= priorityColor %>; font-weight: bold; font-size: 0.9rem;">
+                          <%= priorityStars %> <%= priorityLabel %>
+                        </span>
+                        <h5 class="card-text mb-0" style="color: #333;"><%= todo.content %></h5>
+                      </div>
+                      <% if(todo.deadline) { %>
+                        <% 
+                          const deadline = new Date(todo.deadline);
+                          const now = new Date();
+                          const isOverdue = deadline < now;
+                          const deadlineStr = deadline.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                        %>
+                        <small style="color: <%= isOverdue ? '#dc3545' : '#6c757d' %>;">
+                          <% if(isOverdue) { %>
+                            ⏰ 期限切れ: <%= deadlineStr %>
+                          <% } else { %>
+                            🕐 期限: <%= deadlineStr %>
+                          <% } %>
+                        </small>
+                      <% } %>
+                    </div>
+                    <form action="/delete/<%= todo.id %>" method="post" style="display:inline;">
+                      <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 5px;">削除</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          <% } else { %>
+            <div class="alert alert-info text-center" style="border-radius: 8px;">
+              <h5>タスクがありません</h5>
+              <p>新しいタスクを追加して始めましょう！</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 <% } else { %>
-  <h1>Welcome to the TodoApp</h1>
-  <a class="btn btn-primary" href="/signup" role="button">Sign up now!</a>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div style="padding: 60px 20px;">
+          <h1 style="color: #667eea; font-weight: bold; font-size: 3rem; margin-bottom: 20px;">✓ TodoApp</h1>
+          <p style="font-size: 1.2rem; color: #666; margin-bottom: 30px;">あなたのタスクを効率的に管理しましょう</p>
+          <a class="btn btn-lg" href="/signup" role="button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 25px; padding: 12px 40px; font-weight: 500;">今すぐサインアップ</a>
+          <p class="mt-4" style="color: #999;">すでにアカウントをお持ちですか？ <a href="/signin" style="color: #667eea;">ログイン</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
 <% } %>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
