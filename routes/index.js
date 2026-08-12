@@ -46,12 +46,45 @@ const userId = req.user.id;
 
 router.post('/', function (req, res, next) {
   const isAuth = req.isAuthenticated();
+  
+  if (!isAuth) {
+    return res.redirect('/signin');
+  }
+  
   const userId = req.user.id;
   const todo = req.body.add;
   knex("tasks")
     .insert({user_id: userId, content: todo})
     .then(function () {
       res.redirect('/')
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.render('index', {
+        title: 'ToDo App',
+        todos: [],
+        isAuth: isAuth,
+        errorMessage: [err.sqlMessage],
+      });
+    });
+});
+
+// 削除機能
+router.post('/delete/:id', function (req, res, next) {
+  const isAuth = req.isAuthenticated();
+  
+  if (!isAuth) {
+    return res.redirect('/signin');
+  }
+  
+  const taskId = req.params.id;
+  const userId = req.user.id;
+  
+  knex("tasks")
+    .where({id: taskId, user_id: userId})
+    .delete()
+    .then(function () {
+      res.redirect('/');
     })
     .catch(function (err) {
       console.error(err);

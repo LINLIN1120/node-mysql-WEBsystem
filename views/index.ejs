@@ -22,7 +22,12 @@
     <div class="col-md-6">
       <ul>
         <% for(let todo of todos){ %>
-          <li><span><%= todo.content %></span></li>
+          <li>
+            <span><%= todo.content %></span>
+            <form action="/delete/<%= todo.id %>" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">削除</button>
+            </form>
+          </li>
         <% } %>
       </ul>
     </div>
